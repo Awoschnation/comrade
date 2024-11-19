@@ -43,6 +43,7 @@ async def on_message(message):
     # if messages starts with hello
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+        logging.info("Message Sent: Hello!")
 
 
 @client.event
