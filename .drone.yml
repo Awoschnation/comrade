@@ -82,7 +82,7 @@ volumes:
 # Deploy to Staging #
 #####################
 
-kind: pipline
+kind: pipeline
 type: docker
 name: deploy-staging
 
