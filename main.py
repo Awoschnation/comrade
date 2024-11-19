@@ -56,6 +56,7 @@ async def on_voice_state_update(member, before, after):
         # I should probably break this into its own function, which I can then unit test separately
         if after.channel.id == target_channel and not client.voice_clients:
             play_audio(after, 'ussr_anthem.mp3')
+            logging.info("playing comrade anthem")
             
 
     if before.channel:
