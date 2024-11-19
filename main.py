@@ -14,13 +14,7 @@ logger.addHandler(handler)
 intents = discord.Intents.default()
 intents.message_content=True
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-if "staging" in dir_path:
-    target_channel = os.getenv("STAGING_TARGET_CHANNEL")
-elif "production" in dir_path:
-    target_channel = os.getenv("PRODUCTION_TARGET_CHANNEL")
-else:
-    logging.error("Error occured getting target channel")
+target_channel = os.getenv("TARGET_CHANNEL")
 
 bot_token = os.getenv("BOT_TOKEN")
 
