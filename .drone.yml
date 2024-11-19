@@ -92,7 +92,7 @@ depends_on:
 
 trigger:
   event:
-  - merge
+  - pull_request
   branch:
   - main
 
@@ -118,14 +118,10 @@ steps:
     - pip install -r ./staging/requirements.txt
     - python ./staging/main.py
 
-trigger:
-  event:
-  - pull_request
-  branch:
-  - main
+
 
 node:
-  - group: discord-bots
+  group: discord-bots
     
 ---
 ########################
@@ -137,11 +133,10 @@ type: docker
 name: deploy-production
 
 trigger:
-  status:
-    # Only runs if testing pipeline is successful
-    - success
-  target:
-    - production
+  event:
+  - merge
+  branch:
+  - main
 
 steps:
 # Plugin for Build Notification to Discord
@@ -165,11 +160,6 @@ steps:
   - pip install -r ./production/requirements.txt
   - python ./production/main.py
 
-trigger:
-  branch: main
-  event:
-  - merge
-
 node:
   # ensures only the runer on the bot commander VM will execute this pipeline
-- group: discord-bots
+  group: discord-bots
