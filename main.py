@@ -37,6 +37,7 @@ async def on_ready():
 async def on_message(message):
     # ignores messages from ourselves
     if message.author == client.user:
+        logging.info("Message was from the bot. Ignoring.")
         return
     
     # if messages starts with hello
@@ -86,4 +87,3 @@ async def play_audio(voice_state, audio_source):
 
 if __name__ == "__main__":
     client.run(bot_token, log_handler=handler)
-    
