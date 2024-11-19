@@ -14,13 +14,7 @@ logger.addHandler(handler)
 intents = discord.Intents.default()
 intents.message_content=True
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-if "staging" in dir_path:
-    target_channel = os.getenv("STAGING_TARGET_CHANNEL")
-elif "production" in dir_path:
-    target_channel = os.getenv("PRODUCTION_TARGET_CHANNEL")
-else:
-    logging.error("Error occured getting target channel")
+target_channel = os.getenv("TARGET_CHANNEL")
 
 bot_token = os.getenv("BOT_TOKEN")
 
@@ -37,11 +31,13 @@ async def on_ready():
 async def on_message(message):
     # ignores messages from ourselves
     if message.author == client.user:
+        logging.info("Message was from the bot. Ignoring.")
         return
     
     # if messages starts with hello
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+        logging.info("Message Sent: Hello!")
 
 
 @client.event
@@ -86,4 +82,3 @@ async def play_audio(voice_state, audio_source):
 
 if __name__ == "__main__":
     client.run(bot_token, log_handler=handler)
-    
