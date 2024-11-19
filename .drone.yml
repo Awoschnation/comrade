@@ -1,0 +1,175 @@
+---
+#########
+# Tests #
+#########
+
+kind: pipelne
+type: docker
+name: run_tests
+
+steps:
+  # Plugin for Build Notification to Discord
+  - name: discord notification  
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 
+        from_secret: drone_discord_webhook_id
+      webhook_token:
+        from_secret: drone_discord_webhook_secret
+
+  # Hello World
+  - name: hello world
+    image: alpine
+    commands:
+    - echo hello
+    - echo world
+
+  # Test on Python 3.9
+  - name: test-python-3-9
+    image: python:3.9
+    environment:
+      BOT_TOKEN:
+        from_secret: comrade-bot-token
+      TARGET_CHANNEL:
+        from_secret: comrade-staging-channel-id
+    commands:
+    - pip install -r requirements.txt
+    - pytest
+    volumes:
+    - name: pip-cache
+      path: .cache/pip
+
+  # Test on Python 3.10
+  - name: test-python-3-10
+    image: python:3.10
+    environment:
+      BOT_TOKEN:
+        from_secret: comrade-bot-token
+      TARGET_CHANNEL:
+        from_secret: comrade-staging-channel-id
+    commands:
+    - pip install -r requirements.txt
+    - pytest
+    volumes:
+    - name: pip-cache
+      path: .cache/pip
+
+  # Test on Python 3.11
+  - name: test-python-3-11
+    image: python:3.11
+    environment:
+      BOT_TOKEN:
+        from_secret: comrade-bot-token
+      TARGET_CHANNEL:
+        from_secret: comrade-staging-channel-id
+    commands:
+    - pip install -r requirements.txt
+    - pytest
+    volumes:
+    - name: pip-cache
+      path: .cache/pip
+
+trigger:
+  event:
+  - push
+
+volumes:
+  - name: pip-cache
+    temp: {}
+
+---
+#####################
+# Deploy to Staging #
+#####################
+
+kind: pipline
+type: docker
+name: deploy-staging
+
+depends_on:
+# Must run after a test pipeline
+- run_tests
+
+trigger:
+  event:
+  - merge
+  branch:
+  - main
+
+steps:
+# Plugin for Build Notification to Discord
+- name: discord notification  
+  image: appleboy/drone-discord
+  settings:
+    webhook_id: 
+      from_secret: drone_discord_webhook_id
+    webhook_token:
+      from_secret: drone_discord_webhook_secret
+
+  # Deploy Bot on Python 3.10
+- name: deploy
+  image: python:3.10
+  environment:
+      BOT_TOKEN:
+        from_secret: comrade-bot-token
+      TARGET_CHANNEL:
+        from_secret: comrade-staging-channel-id
+  commands:
+    - pip install -r ./staging/requirements.txt
+    - python ./staging/main.py
+
+trigger:
+  event:
+  - pull_request
+  branch:
+  - main
+
+node:
+  - group: discord-bots
+    
+---
+########################
+# Deploy to Production #
+########################
+
+kind: pipeline
+type: docker
+name: deploy-production
+
+trigger:
+  status:
+    # Only runs if testing pipeline is successful
+    - success
+  target:
+    - production
+
+steps:
+# Plugin for Build Notification to Discord
+- name: discord notification  
+  image: appleboy/drone-discord
+  settings:
+    webhook_id: 
+      from_secret: drone_discord_webhook_id
+    webhook_token:
+      from_secret: drone_discord_webhook_secret
+
+# Deploy Bot on Python 3.10
+- name: deploy
+  image: python:3.10
+  environment:
+      BOT_TOKEN:
+        from_secret: comrade-bot-token
+      TARGET_CHANNEL:
+        from_secret: comrade-production-channel-id
+  commands:
+  - pip install -r ./production/requirements.txt
+  - python ./production/main.py
+
+trigger:
+  branch: main
+  event:
+  - merge
+
+node:
+  # ensures only the runer on the bot commander VM will execute this pipeline
+- group: discord-bots
