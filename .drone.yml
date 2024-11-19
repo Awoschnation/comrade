@@ -3,7 +3,7 @@
 # Tests #
 #########
 
-kind: pipelne
+kind: pipeline
 type: docker
 name: run_tests
 
