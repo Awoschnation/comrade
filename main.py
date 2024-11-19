@@ -48,6 +48,7 @@ async def on_voice_state_update(member, before, after):
     if after.channel:
         # User connected to a voice channel
         print(f"{member.name} connected to {after.channel.name}")
+        logging.info("User connected to a voice channel")
 
         print(f"channel id: {after.channel.id}")
         print(f"voice clients: {client.voice_clients}")
