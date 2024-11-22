@@ -62,7 +62,7 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel:
         # User disconnected from a voice channel
-        print(f"{member.name} disconnected from {before.channel.name}")
+        logging.info(f"{member.name} disconnected from the {before.channel.name} voice channel")
 
         print(client.voice_clients)
 
