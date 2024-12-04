@@ -40,8 +40,9 @@ steps:
     - pip install -r requirements.txt
     - pytest
     volumes:
+      # Mount pip cache from host
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
   # Test on Python 3.10
   - name: test-python-3-10
@@ -56,7 +57,7 @@ steps:
     - pytest
     volumes:
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
   # Test on Python 3.11
   - name: test-python-3-11
@@ -71,7 +72,7 @@ steps:
     - pytest
     volumes:
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
 volumes:
   - name: pip-cache
@@ -117,6 +118,9 @@ steps:
   commands:
     - pip install -r ./staging/requirements.txt
     - python ./staging/main.py
+  volumes:
+    - name: pip-cache
+      path: /root/.cache/pip
 
 
 
@@ -159,6 +163,9 @@ steps:
   commands:
   - pip install -r ./production/requirements.txt
   - python ./production/main.py
+  volumes:
+    - name: pip-cache
+      path: /root/.cache/pip
 
 node:
   # ensures only the runer on the bot commander VM will execute this pipeline
