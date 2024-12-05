@@ -38,10 +38,13 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py &
+    - sleep 30
     - pytest
     volumes:
+      # Mount pip cache from host
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
   # Test on Python 3.10
   - name: test-python-3-10
@@ -53,10 +56,12 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py &
+    - sleep 30
     - pytest
     volumes:
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
   # Test on Python 3.11
   - name: test-python-3-11
@@ -68,10 +73,12 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py &
+    - sleep 30
     - pytest
     volumes:
     - name: pip-cache
-      path: .cache/pip
+      path: /root/.cache/pip
 
 volumes:
   - name: pip-cache
@@ -116,7 +123,10 @@ steps:
         from_secret: comrade-staging-channel-id
   commands:
     - pip install -r ./staging/requirements.txt
-    - python ./staging/main.py
+    - python ./staging/main.py &
+  volumes:
+    - name: pip-cache
+      path: /root/.cache/pip
 
 
 
@@ -158,7 +168,10 @@ steps:
         from_secret: comrade-production-channel-id
   commands:
   - pip install -r ./production/requirements.txt
-  - python ./production/main.py
+  - python ./production/main.py &
+  volumes:
+    - name: pip-cache
+      path: /root/.cache/pip
 
 node:
   # ensures only the runer on the bot commander VM will execute this pipeline
