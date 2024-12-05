@@ -38,6 +38,8 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py
+    - sleep 30
     - pytest
     volumes:
       # Mount pip cache from host
@@ -54,6 +56,8 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py
+    - sleep 30
     - pytest
     volumes:
     - name: pip-cache
@@ -69,6 +73,8 @@ steps:
         from_secret: comrade-staging-channel-id
     commands:
     - pip install -r requirements.txt
+    - python main.py
+    - sleep 30
     - pytest
     volumes:
     - name: pip-cache
